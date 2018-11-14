@@ -36,12 +36,27 @@
 		<hr>
 		<div>
 			<table class="table table-bordered">
+				<tr class="success">
+					<th>选择地区</th>
+					<td>
+						<label><input type="radio" name="cite" checked value="0">贵州&nbsp; &nbsp; &nbsp; &nbsp;</label>
+						<label><input type="radio" name="cite" value="1">全国</label>
+					</td>
+				</tr>
+				<tr class="active">
+					<th>选择行业</th>
+					<td>
+						<label><input type="radio" name="trade" checked value="0">建筑业&nbsp; &nbsp; &nbsp; &nbsp;</label>
+						<label><input type="radio" name="trade" value="1">非建筑业</label>
+					</td>
+				</tr>
 				<tr class="info">
 					<th>操作方式</th>
 					<td>
 						<label><input type="radio" name="type" checked value="0">通过信用代码获取单个企业数据&nbsp; &nbsp;</label><br>
 						<label><input type="radio" name="type" value="1">通过公司全称获取单个企业数据&nbsp; &nbsp;</label><br>
-						<label><input type="radio" name="type" value="2">通过信用代码获取单个企业数据&nbsp; &nbsp;</label><br>
+						<label><input type="radio" name="type" value="2">获取建筑业注册人员数据&nbsp; &nbsp;</label><br>
+						<label><input type="radio" name="type" value="3">获取四库一平台id数据&nbsp; &nbsp;</label><br>
 					</td>
 				</tr>
 				<tr class="warning">
@@ -50,6 +65,7 @@
 						<label><input type="radio" name="content" checked value="0">注册人员&nbsp; &nbsp;</label> &nbsp; &nbsp; 
 						<label><input type="radio" name="content" value="1">资质信息&nbsp; &nbsp;</label> &nbsp; &nbsp; 
 						<label><input type="radio" name="content" value="2">企业项目&nbsp; &nbsp;</label>
+						<label><input type="radio" name="content" value="3">编号信息&nbsp; &nbsp;</label>
 					</td>
 				</tr>
 				<tr class="success">
@@ -89,7 +105,24 @@
 	</div>
 	<script>
 		$(function(){
+			var cite=0;
+			var trade=0;
 			var type=0;
+			var value=0;
+			var content=0;
+			$('input[name=cite]').change(function(){
+				cite = $('input[name=cite]:checked').val();
+			});
+			$('input[name=value]').change(function(){
+				value = $('input[name=value]').val();
+			});
+			$('input[name=content]').change(function(){
+				content = $('input[name=content]:checked').val();
+			});
+			$('input[name=trade]').change(function(){
+				trade = $('input[name=trade]:checked').val();
+			});
+
 			$('input[name=type]').change(function(){
 				type=this.value;
 				var one =false,two=false,three=false;
@@ -108,10 +141,10 @@
 						$('#value').prepend(str);
 						two =true;
 					}
-				}else{
+				}else if(type==2 || type==3){
 					if(three==false){
 						$('#value').children().remove();
-						var str = `<span>---待定---：</span><input type="text"  size="40" class="val" name="value"> &nbsp; <span style='color:red'>*---待定---</span>`;
+						var str = `<span style="color:red">该选项无需填入信息</span>`;
 						$('#value').prepend(str);
 						three =true;
 					}
@@ -119,14 +152,17 @@
 			});
 			
 			$('.start').click(function(){
+				value=$('input[name=value]').val();
+				var str = cite+','+trade+','+type+','+content;
 				var url = "/bigdata/start.php";
 				$.ajax({
-					type: "GET",
+					type: "POST",
 		            url: url,
-		            data: {'type':type, 'content':$('input[name=content]:checked').val()},
+		            data: {'str':str, 'value':value},
 		            dataType: "json",
 		            success: function(data){
-		                        $('#textarea').html('请求状态：'+data.success+'<br>结果条数：'+data.number+'<br>消耗时间：'+data.time+'秒');
+		                        $('#textarea').html(123);
+		                        //'请求状态：'+data.success+'<br>结果条数：'+data.number+'<br>消耗时间：'+data.time+'秒'
 		                	}
 				});
 			});
